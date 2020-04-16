@@ -21,7 +21,7 @@ PB0, PB2 = USB data lines
 */
 
 #define BIT_PIEZO 1
-#define BIT_KEY 4
+#define BIT_KEY 0
 
 // Adjust speed based on trimpot connected to reset pin -- remove this line to restore earlier behaviour
 #define USE_SPEED_CONTROL
