@@ -15,9 +15,10 @@
 /*
 Pin assignment:
 PB1 = waveform output to piezo
-PB4 = key input (active low with pull-up)
+//Changed to accomodate different USB Pins on Attiny85
+PB0 = key input (active low with pull-up)
 
-PB0, PB2 = USB data lines
+PB3, PB4 = USB data lines
 */
 
 #define BIT_PIEZO 1
@@ -357,7 +358,7 @@ static void timerPoll(void) {
 
 static void timerInit(void) {
     TCCR0B = 3;
-    OCR0A = 64;
+    OCR0A = 128; //sets the overflow for the Sidetone
     TCCR1 = 0x0b;           /* select clock: 16.5M/1k -> overflow rate = 16.5M/256k = 62.94 Hz */
     modifier=0;
     symbol=&symbolBuffer[sizeof(symbolBuffer)];
@@ -398,7 +399,7 @@ uchar   usbFunctionSetup(uchar data[8]) {
  * derived from the 66 MHz peripheral clock by dividing. Our timing reference
  * is the Start Of Frame signal (a single SE0 bit) available immediately after
  * a USB RESET. We first do a binary search for the OSCCAL value and then
- * optimize this value with a neighboorhod search.
+ * optimize this value with a neighborhood search.
  * This algorithm may also be used to calibrate the RC oscillator directly to
  * 12 MHz (no PLL involved, can therefore be used on almost ALL AVRs), but this
  * is wide outside the spec for the OSCCAL value and the required precision for

@@ -37,7 +37,7 @@ flash:	all
 
 
 # Fuse high byte:
-# 0xdd = 1 1 0 1   1 1 0 1
+# 0x5d = 0 1 0 1   1 1 0 1 //Digistump/digispark does not set RSTDISBL fuse
 #        ^ ^ ^ ^   ^ \-+-/ 
 #        | | | |   |   +------ BODLEVEL 2..0 (brownout trigger level -> 2.7V)
 #        | | | |   +---------- EESAVE (preserve EEPROM on Chip Erase -> not preserved)
