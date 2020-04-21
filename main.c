@@ -22,6 +22,7 @@ PB3, PB4 = USB data lines
 */
 
 #define BIT_PIEZO 1
+#define BIT_FREERUN 2
 #define BIT_KEY 0
 
 // Adjust speed based on trimpot connected to reset pin -- remove this line to restore earlier behaviour
@@ -130,10 +131,18 @@ static inline void soundOff(){
 static void timerPoll(void) {
     static uchar up = 255;
     static uchar down;
+    static uchar freerun = 0;
 
     if(TIFR & (1 << TOV1)){
         TIFR = (1 << TOV1);  // clear overflow
-
+ 
+        //get the clockrate out of this thing on PB2
+        if (freerun) {
+            freerun = 0;
+        } else {
+            freerun++;
+            PORTB &= ~(1 << BIT_FREERUN);  /* pull-up on key input */
+        }
         if(!(PINB & (1 << BIT_KEY))){ //key held
             soundOn();
             if (down++ ==spacelength+dashlength) { //this is a backspace
@@ -485,6 +494,9 @@ int main(void) {
     usbDeviceConnect();
     DDRB |= 1 << BIT_PIEZO;   /* output for buzzer */
     PORTB |= 1 << BIT_KEY;  /* pull-up on key input */
+    //setup freerun
+    DDRB |= 1 << BIT_FREERUN;   /* output for buzzer */
+
     wdt_enable(WDTO_1S);
     timerInit();
     #ifdef USE_SPEED_CONTROL
