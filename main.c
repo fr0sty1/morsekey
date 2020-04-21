@@ -338,6 +338,8 @@ static void timerPoll(void) {
 }
 
 #ifdef USE_SPEED_CONTROL
+// In the future perhaps use a lookup table?
+// uchar spacelen[16] = [
   #define adc_startconversion() ADCSRA=(1<<ADEN|1<<ADSC|1<<ADIF|1<<ADPS2|1<<ADPS1|1<<ADPS0)
   static void setSpeed(void){
     static uint16_t oldreading = 0;
@@ -349,11 +351,14 @@ static void timerPoll(void) {
         oldreading = reading;
 
         // Trimpot is 10K + 22K fixed, should range from VCC to (22/32)*VCC -> 703 to 1023.
-        reading -= 703;
-        reading >>= 2; // 0 to 80
+        // EDIT: 10K + 30k, 30/40 -> 768 ->1023
+        if (reading <=768) reading = 768; //prevent underflow of coming subtraction
+        reading -= 768; //0-255;
+        reading >>=2; //0-64;
 
-        spacelength = reading+20; //20 to 100
-        dashlength  = (reading>>3)+4; //4 to 14
+        spacelength = reading+20[reading]; //20-84
+        reading >>= 3; //0-8
+        dashlength  = +4; //4-12 
       }
       adc_startconversion();
     }
