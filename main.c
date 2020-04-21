@@ -11,6 +11,7 @@
 #include <util/delay.h>
 
 #include "usbdrv.h"
+#include "charmap.h"
 
 /*
 Pin assignment:
@@ -147,8 +148,8 @@ static void timerPoll(void) {
         if(!(PINB & (1 << BIT_KEY))){ //key held
             soundOn();
             if (down++ ==spacelength+dashlength) { //this is a backspace
-                down=dashlength; //have ittcq cq cq k c 
-                typechar(0x2A);
+                down=dashlength;
+                typechar(CHAR_BACKSPACE);
                 up=255;
             }
             if (down<spacelength) up=0;
@@ -177,14 +178,14 @@ static void timerPoll(void) {
                             if (symbolBuffer[3]=='.'){
                                 if (symbolBuffer[4]=='.'){
                                     if (symbolBuffer[5]==0){
-                                        typechar(0x22);//5
+                                        typechar(CHAR_5);//5
                                     }
                                 } else if (symbolBuffer[4]=='-') {
                                     if (symbolBuffer[5]==0){
-                                        typechar(0x21);//4
+                                        typechar(CHAR_4);//4
                                     }
                                 } else {
-                                    typechar(0x0B);//h
+                                    typechar(CHAR_H);//h
                                 }
                             } else if (symbolBuffer[3]=='-') {
                                 if (symbolBuffer[4]=='.'){
@@ -192,69 +193,69 @@ static void timerPoll(void) {
                                         if (symbolBuffer[6]==0){
                                             //SK
                                             modifier = MOD_SHIFT_RIGHT;
-                                            typechar(0x0E);//S
+                                            typechar(CHAR_S);//S
                                             modifier = MOD_SHIFT_RIGHT;
-                                            typechar(0x16);//K
+                                            typechar(CHAR_K);//K
                                         }
                                     }
                                 } else if (symbolBuffer[4]=='-') {
                                     if (symbolBuffer[5]==0){
-                                        typechar(0x20);//3
+                                        typechar(CHAR_3);//3
                                     }
                                 } else {
-                                    typechar(0x19);//V
+                                    typechar(CHAR_V);//V
                                 }
                             } else {
-                                typechar(0x16);//S
+                                typechar(CHAR_S);//S
                             }
                         } else if (symbolBuffer[2]=='-') {
                             if (symbolBuffer[3]=='.'){
                                 if (symbolBuffer[4]==0) {
-                                    typechar(0x09);//F
+                                    typechar(CHAR_F);//F
                                 }
                             } else if (symbolBuffer[3]=='-') {
                                 if (symbolBuffer[4]=='-' && symbolBuffer[5]==0) {
-                                    typechar(0x1F);//2
+                                    typechar(CHAR_2);//2
                                 } else if (symbolBuffer[4]=='.' && symbolBuffer[5]=='.' && symbolBuffer[6]==0) {
                                     modifier = MOD_SHIFT_RIGHT;
-                                    typechar(0x38);// /
+                                    typechar(CHAR_SLASH);// ?
                                 }
                             } else {
-                                typechar(0x18);//U
+                                typechar(CHAR_U);//U
                             }
                         } else {
-                            typechar(0x0C);//I
+                            typechar(CHAR_I);//I
                         }
                     } else if (symbolBuffer[1]=='-') {
                         
                         if (symbolBuffer[2]=='.'){
                             if (symbolBuffer[3]=='.'){
-                                if (symbolBuffer[4]==0) typechar(0x0F);//L
+                                if (symbolBuffer[4]==0) typechar(CHAR_L);//L
                             } else if (symbolBuffer[3]=='-') {
-                                if (symbolBuffer[4]=='.' && symbolBuffer[5]=='-' && symbolBuffer[6]==0) typechar(0x37);//.
-                                else if (symbolBuffer[4]=='.' && symbolBuffer[6]==0) {modifier=MOD_SHIFT_RIGHT;typechar(0x2E);}//+
+                                if (symbolBuffer[4]=='.' && symbolBuffer[5]=='-' && symbolBuffer[6]==0) typechar(CHAR_DOT);//.
+                                else if (symbolBuffer[4]=='.' && symbolBuffer[6]==0) {modifier=MOD_SHIFT_RIGHT;typechar(CHAR_EQUALS);}//+
                             } else {
-                                typechar(0x15);//R
+                                typechar(CHAR_R);//R
                             }
                         } else if (symbolBuffer[2]=='-') {
                             if (symbolBuffer[3]=='.'){
                                 if (symbolBuffer[4]==0) {
-                                    typechar(0x13);//P
+                                    typechar(CHAR_P);//P
                                 }
                             } else if (symbolBuffer[3]=='-') {
                                 if (symbolBuffer[4]==0) {
-                                    typechar(0x0D);//J
+                                    typechar(CHAR_J);//J
                                 } else if (symbolBuffer[4]=='-' && symbolBuffer[5]==0){
-                                    typechar(0x1E);//1
+                                    typechar(CHAR_1);//1
                                 }
                             } else {
-                                typechar(0x1A);//W
+                                typechar(CHAR_W);//W
                             }
                         } else {
-                            typechar(0x04);//A
+                            typechar(CHAR_A);//A
                         }
                     } else {
-                        typechar(0x08);//E
+                        typechar(CHAR_E);//E
                     }
                 } else if (symbolBuffer[0]=='-') {
                     if (symbolBuffer[1]=='.'){
@@ -262,75 +263,75 @@ static void timerPoll(void) {
                             if (symbolBuffer[3]=='.'){
                                 if (symbolBuffer[4]=='.'){
                                     if (symbolBuffer[5]==0){
-                                        typechar(0x23);//6
+                                        typechar(CHAR_6);//6
                                     }
                                 } else if (symbolBuffer[4]=='-') {
                                     if (symbolBuffer[5]==0){
-                                        typechar(0x2E);// =
+                                        typechar(CHAR_EQUALS);// =
                                     }
                                 } else {
-                                    typechar(0x05);//B
+                                    typechar(CHAR_B);//B
                                 }
                             } else if (symbolBuffer[3]=='-') {
                                 if (symbolBuffer[4]=='.'){
                                     if (symbolBuffer[5]==0){
-                                        typechar(0x38);// /
+                                        typechar(CHAR_SLASH);// /
                                     }
                                 } else if (symbolBuffer[4]=='-') {
                                     //if (symbolBuffer[5]==0){
                                         //typechar();//
                                     //}
                                 } else {
-                                    typechar(0x1B);//X
+                                    typechar(CHAR_X);//X
                                 }
                             } else {
-                                typechar(0x07);//D
+                                typechar(CHAR_D);//D
                             }
                         } else if (symbolBuffer[2]=='-') {
                             if (symbolBuffer[3]=='.'){
                                 if (symbolBuffer[4]==0) {
-                                    typechar(0x06);//C
+                                    typechar(CHAR_C);//C
                                 }
                             } else if (symbolBuffer[3]=='-') {
                                 if (symbolBuffer[4]==0) {
-                                    typechar(0x1C);//Y
+                                    typechar(CHAR_Y);//Y
                                 }
                             } else {
-                                typechar(0x0E);//K
+                                typechar(CHAR_K);//K
                             }
                         } else {
-                            typechar(0x11);//N
+                            typechar(CHAR_N);//N
                         }
                     } else if (symbolBuffer[1]=='-') {
                         if (symbolBuffer[2]=='.'){
                             if (symbolBuffer[3]=='.'){
-                                if (symbolBuffer[4]==0) typechar(0x1D);//Z
-                                else if (symbolBuffer[4]=='.' && symbolBuffer[5]==0) typechar(0x24);//7
-                                else if (symbolBuffer[4]=='-' && symbolBuffer[5]=='-' && symbolBuffer[6]==0) typechar(0x36);//,
+                                if (symbolBuffer[4]==0) typechar(CHAR_Z);//Z
+                                else if (symbolBuffer[4]=='.' && symbolBuffer[5]==0) typechar(CHAR_7);//7
+                                else if (symbolBuffer[4]=='-' && symbolBuffer[5]=='-' && symbolBuffer[6]==0) typechar(CHAR_COMMA);//,
                             } else if (symbolBuffer[3]=='-') {
-                                if (symbolBuffer[4]==0) typechar(0x14);//Q
+                                if (symbolBuffer[4]==0) typechar(CHAR_Q);//Q
                             } else {
-                                typechar(0x0A);//G
+                                typechar(CHAR_G);//G
                             }
                         } else if (symbolBuffer[2]=='-') {
                             if (symbolBuffer[3]=='.'){
                                 if (symbolBuffer[4]=='.' && symbolBuffer[5]==0) {
-                                    typechar(0x25);//8
+                                    typechar(CHAR_8);//8
                                 }
                             } else if (symbolBuffer[3]=='-') {
                                 if (symbolBuffer[4]=='-' && symbolBuffer[5]==0) {
-                                    typechar(0x27);// 0
+                                    typechar(CHAR_0);//0
                                 } else if (symbolBuffer[4]=='.' && symbolBuffer[5]==0) {
-                                    typechar(0x26);// 9
+                                    typechar(CHAR_9);//9
                                 }
                             } else {
-                                typechar(0x12);//O
+                                typechar(CHAR_O);//O
                             }
                         } else {
-                            typechar(0x10);//M
+                            typechar(CHAR_M);//M
                         }
                     } else {
-                        typechar(0x17);//T
+                        typechar(CHAR_T);//T
                     }
                 }
                 
@@ -340,7 +341,7 @@ static void timerPoll(void) {
             }
             if (up==spacelength && down<spacelength) {
                 //type space
-                typechar(0x2C);
+                typechar(CHAR_SPACE);
             }
         }
 
