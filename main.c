@@ -379,7 +379,7 @@ static void timerPoll(void) {
 static void timerInit(void) {
     TCCR0B = 3;
     OCR0A = 128; //sets the overflow for the Sidetone
-    TCCR1 = 0x0b;           /* select clock: 16.5M/1k -> overflow rate = 16.5M/256k = 62.94 Hz */
+    TCCR1 = 0x0b;           /* select clock: 16.5M/1k -> overflow rate = 16.5M/256k = 62.94 Hz (This math is suspect) */
     modifier=0;
     symbol=&symbolBuffer[sizeof(symbolBuffer)];
     while (symbol!=&symbolBuffer[0]) {*--symbol=0;}
