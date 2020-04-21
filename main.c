@@ -359,7 +359,7 @@ static void timerPoll(void) {
     if (ADCSRA & (1<<ADIF)) {
       uint16_t reading = ADCW;
       int16_t diff = oldreading - reading;
-      if (diff > 5 || diff < -5) {
+      if (diff > 25 || diff < -25) {
         oldreading = reading;
 
         // Trimpot is 10K + 22K fixed, should range from VCC to (22/32)*VCC -> 703 to 1023.
@@ -368,21 +368,25 @@ static void timerPoll(void) {
         reading -= 768; //0-255;
         reading >>=2; //0-64;
 
-        spacelength = reading+20; //20-84
         reading >>= 3; //0-8
-        dashlength  = reading+4; //4-12 
+        uchar ditlength = reading+1; //1-9
+        dashlength = ditlength*2; //4-12 
+        spacelength = ditlength*6; //6-54
+        typechar(CHAR_1+reading); //1-9
       }
       adc_startconversion();
     }
   }
 #endif
 
+
+
 /* ------------------------------------------------------------------------- */
 
 static void timerInit(void) {
     TCCR0B = 3;
-    OCR0A = 128; //sets the overflow for the Sidetone
-    TCCR1 = 0x0b;           /* select clock: 16.5M/1k -> overflow rate = 16.5M/256k = 62.94 Hz (This math is suspect) */
+    OCR0A = 255; //sets the overflow for the sidetone, higher = lower tone. 256 ~= 500Hz
+    TCCR1 = 0x0a;           /* select clock: 16.5M/1k -> overflow rate = 16.5M/256k = 62.94 Hz */
     modifier=0;
     symbol=&symbolBuffer[sizeof(symbolBuffer)];
     while (symbol!=&symbolBuffer[0]) {*--symbol=0;}
