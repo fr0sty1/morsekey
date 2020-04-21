@@ -139,6 +139,7 @@ static void timerPoll(void) {
         //get the clockrate out of this thing on PB2
         if (freerun) {
             freerun = 0;
+            PORTB |= 1 << BIT_FREERUN;   /* output for buzzer */
         } else {
             freerun++;
             PORTB &= ~(1 << BIT_FREERUN);  /* pull-up on key input */
@@ -367,7 +368,7 @@ static void timerPoll(void) {
 
         spacelength = reading+20; //20-84
         reading >>= 3; //0-8
-        dashlength  = +4; //4-12 
+        dashlength  = reading+4; //4-12 
       }
       adc_startconversion();
     }
