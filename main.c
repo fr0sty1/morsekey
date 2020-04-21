@@ -189,7 +189,7 @@ static void timerPoll(void) {
                                     typechar(0x19);//V
                                 }
                             } else {
-                                typechar(0x16);//s
+                                typechar(0x16);//S
                             }
                         } else if (symbolBuffer[2]=='-') {
                             if (symbolBuffer[3]=='.'){
@@ -207,7 +207,7 @@ static void timerPoll(void) {
                                 typechar(0x18);//U
                             }
                         } else {
-                            typechar(0x0C);//i
+                            typechar(0x0C);//I
                         }
                     } else if (symbolBuffer[1]=='-') {
                         
@@ -238,7 +238,7 @@ static void timerPoll(void) {
                             typechar(0x04);//A
                         }
                     } else {
-                        typechar(0x08);//e
+                        typechar(0x08);//E
                     }
                 } else if (symbolBuffer[0]=='-') {
                     if (symbolBuffer[1]=='.'){
