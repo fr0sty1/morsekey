@@ -136,8 +136,8 @@ static void timerPoll(void) {
 
         if(!(PINB & (1 << BIT_KEY))){ //key held
             soundOn();
-            if (down++ ==spacelength+dashlength) {
-                down=spacelength;
+            if (down++ ==spacelength+dashlength) { //this is a backspace
+                down=dashlength; //have ittcq cq cq k c 
                 typechar(0x2A);
                 up=255;
             }
@@ -178,9 +178,15 @@ static void timerPoll(void) {
                                 }
                             } else if (symbolBuffer[3]=='-') {
                                 if (symbolBuffer[4]=='.'){
-                                    //if (symbolBuffer[5]==0){
-                                        //typechar();//
-                                    //}
+                                    if (symbolBuffer[5]=='-'){
+                                        if (symbolBuffer[6]==0){
+                                            //SK
+                                            modifier = MOD_SHIFT_RIGHT;
+                                            typechar(0x0E);//S
+                                            modifier = MOD_SHIFT_RIGHT;
+                                            typechar(0x16);//K
+                                        }
+                                    }
                                 } else if (symbolBuffer[4]=='-') {
                                     if (symbolBuffer[5]==0){
                                         typechar(0x20);//3
