@@ -116,6 +116,7 @@ static void buildReport(void) {
     reportBuffer[1] = key;
 }
 
+#define TYPECHAR(key) { modifier = MOD_SHIFT_RIGHT;typechar(key); }
 static void typechar(char key) {
     if (nextDigit==&valueBuffer[sizeof(valueBuffer)]) {*--nextDigit = 0xff;}/* terminate with 0xff */
     *--nextDigit = 0;
@@ -192,10 +193,8 @@ static void timerPoll(void) {
                                     if (symbolBuffer[5]=='-'){
                                         if (symbolBuffer[6]==0){
                                             //SK
-                                            modifier = MOD_SHIFT_RIGHT;
-                                            typechar(CHAR_S);//S
-                                            modifier = MOD_SHIFT_RIGHT;
-                                            typechar(CHAR_K);//K
+                                            TYPECHAR(CHAR_S);//S
+                                            TYPECHAR(CHAR_K);//K
                                         }
                                     }
                                 } else if (symbolBuffer[4]=='-') {
@@ -217,8 +216,7 @@ static void timerPoll(void) {
                                 if (symbolBuffer[4]=='-' && symbolBuffer[5]==0) {
                                     typechar(CHAR_2);//2
                                 } else if (symbolBuffer[4]=='.' && symbolBuffer[5]=='.' && symbolBuffer[6]==0) {
-                                    modifier = MOD_SHIFT_RIGHT;
-                                    typechar(CHAR_SLASH);// ?
+                                    TYPECHAR(CHAR_SLASH);// ?
                                 }
                             } else {
                                 typechar(CHAR_U);//U
@@ -233,7 +231,7 @@ static void timerPoll(void) {
                                 if (symbolBuffer[4]==0) typechar(CHAR_L);//L
                             } else if (symbolBuffer[3]=='-') {
                                 if (symbolBuffer[4]=='.' && symbolBuffer[5]=='-' && symbolBuffer[6]==0) typechar(CHAR_DOT);//.
-                                else if (symbolBuffer[4]=='.' && symbolBuffer[6]==0) {modifier=MOD_SHIFT_RIGHT;typechar(CHAR_EQUALS);}//+
+                                else if (symbolBuffer[4]=='.' && symbolBuffer[6]==0) TYPECHAR(CHAR_EQUALS);//+
                             } else {
                                 typechar(CHAR_R);//R
                             }
