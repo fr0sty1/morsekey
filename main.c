@@ -141,7 +141,7 @@ static void timerPoll(void) {
         //get the clockrate out of this thing on PB2
         if (freerun) {
             freerun = 0;
-            PORTB |= 1 << BIT_FREERUN;   /* output for buzzer */
+            PORTB |= 1 << BIT_FREERUN;   /* oscillates at 1/2 the polling loop frequency */
         } else {
             freerun++;
             PORTB &= ~(1 << BIT_FREERUN);  /* pull-up on key input */
@@ -149,16 +149,18 @@ static void timerPoll(void) {
         if(!(PINB & (1 << BIT_KEY))){ //key held
             soundOn();
             if (down++ ==spacelength+dashlength) { //this is a backspace
-                down=dashlength;
+                down=spacelength;//repeat backspace every spacelength
                 typechar(CHAR_BACKSPACE);
                 up=255;
             }
             if (down<spacelength) up=0;
-        } else if (down){
+        } else if (down){//State transition from down to up
             soundOff();
+            //bounds check the symbolBuffer
             if (symbol!=&symbolBuffer[sizeof(symbolBuffer)]){
                 if (down>=spacelength) {
-                    *symbol=0;
+                    //zero out the buffer,reset symbol pointer
+                    *symbol='\0';
                     while (symbol!=&symbolBuffer[0]) {*--symbol=0;}
                 } else if (down<dashlength) {
                     *symbol++ = '.';
@@ -167,10 +169,11 @@ static void timerPoll(void) {
                 }
             }
             down =0;
-        } else {
+        } else { //key remains up
             soundOff();
+            //up==255 is a waiting state
             if (up++ ==255) up=255;
-            if (up==1+dashlength) {
+            if (up==1+dashlength) { //after dashlength up time has passed, decode the character
                 modifier=0;
                 //work out key
                 if (symbolBuffer[0]=='.') {
