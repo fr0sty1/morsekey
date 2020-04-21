@@ -365,7 +365,7 @@ static void timerPoll(void) {
         reading -= 768; //0-255;
         reading >>=2; //0-64;
 
-        spacelength = reading+20[reading]; //20-84
+        spacelength = reading+20; //20-84
         reading >>= 3; //0-8
         dashlength  = +4; //4-12 
       }
