@@ -38,10 +38,13 @@ PB3, PB4 = USB data lines
 
 /* ------------------------------------------------------------------------- */
 
+uchar test = MORSE_A;
 #ifdef USE_SPEED_CONTROL
+  uchar         ditlength   = 3;
   uchar         dashlength  = 9;
   uchar         spacelength = 45;   // longer for farnsworth pause
 #else
+  const uchar   ditlength   = 3;
   const uchar   dashlength  = 9;
   const uchar   spacelength = 45;   // longer for farnsworth pause
 #endif
@@ -350,29 +353,38 @@ static void timerPoll(void) {
 }
 
 #ifdef USE_SPEED_CONTROL
-// In the future perhaps use a lookup table?
-// uchar spacelen[16] = [
+uchar sample_count = 0;
+uint16_t averaged_sample = 0;
   #define adc_startconversion() ADCSRA=(1<<ADEN|1<<ADSC|1<<ADIF|1<<ADPS2|1<<ADPS1|1<<ADPS0)
   static void setSpeed(void){
     static uint16_t oldreading = 0;
     // Run if ADC is finished, but don't wait for it
     if (ADCSRA & (1<<ADIF)) {
-      uint16_t reading = ADCW;
-      int16_t diff = oldreading - reading;
-      if (diff > 25 || diff < -25) {
-        oldreading = reading;
+      averaged_sample += ADCW;
+      if (!(++sample_count & 0x3)){
+          averaged_sample >>= 2;//divide by 4
+          sample_count++;
+          int16_t reading = averaged_sample;
+          int16_t diff = oldreading - reading;
+          if (diff > 15 || diff < -15) {
+              oldreading = reading;
 
-        // Trimpot is 10K + 22K fixed, should range from VCC to (22/32)*VCC -> 703 to 1023.
-        // EDIT: 10K + 30k, 30/40 -> 768 ->1023
-        if (reading <=768) reading = 768; //prevent underflow of coming subtraction
-        reading -= 768; //0-255;
-        reading >>=2; //0-64;
+              // Trimpot is 10K + 22K fixed, should range from VCC to (22/32)*VCC -> 703 to 1023.
+              // EDIT: 10K + 30k, 30/40 -> 768 ->1023
 
-        reading >>= 3; //0-8
-        uchar ditlength = reading+1; //1-9
-        dashlength = ditlength*2; //4-12 
-        spacelength = ditlength*6; //6-54
-        typechar(CHAR_1+reading); //1-9
+              if (reading <=800) reading = 800; //prevent underflow of coming subtraction
+              reading -= 800; //~0-223 
+              reading /= 20; //0-11
+
+              uchar last_dit = ditlength;
+              ditlength = reading+1; //1-9
+              dashlength = ditlength*0b10; //4-12 
+              spacelength = ditlength*6; //6-54
+              if(last_dit != ditlength) {
+                  typechar(CHAR_1+reading%10); //1-9
+
+              }
+          }
       }
       adc_startconversion();
     }
