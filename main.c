@@ -133,6 +133,8 @@ static inline void soundOff(){
   TCCR0A = 0;
 }
 
+#define KEY_DOWN (!(PINB & (1 << BIT_KEY)))
+
 static void timerPoll(void) {
     static uchar up = 255;
     static uchar down;
@@ -149,7 +151,7 @@ static void timerPoll(void) {
             freerun++;
             PORTB &= ~(1 << BIT_FREERUN);  /* pull-up on key input */
         }
-        if(!(PINB & (1 << BIT_KEY))){ //key held
+        if(KEY_DOWN){ //key held
             soundOn();
             if (down++ ==spacelength+dashlength) { //this is a backspace
                 down=spacelength;//repeat backspace every spacelength
@@ -535,7 +537,7 @@ int main(void) {
         }
         timerPoll();
         #ifdef USE_SPEED_CONTROL
-          setSpeed();
+          if(!KEY_DOWN) setSpeed();//don't bother sampling when keying
         #endif
     }
     return 0;
